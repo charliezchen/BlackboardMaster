@@ -5,7 +5,7 @@ import time
 from requests.packages import urllib3
 urllib3.disable_warnings()
 
-CURRENT_COURSE=["World Literature (2019)", "AP Human Geography (2019)"]
+CURRENT_COURSE=["World Literature (2019)"]#, "AP Human Geography (2019)"]
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
@@ -24,7 +24,8 @@ class Spider(object):
 		self.passwd=passwd
 		self.session=requests.Session()
 		self.courses=dict()
-		pass
+		self.scores=dict()
+		self.weights=list()
 
 	def login(self):
 		current_url=login_url.format(self.account,self.passwd)
@@ -90,9 +91,22 @@ class Spider(object):
 			
 		for score in scores:
 			print(score+str(scores[score][0]/scores[score][1]))
+		
+		self.scores=scores
 
 		print(scores[icat])
-		exit(0)
+		return
+	def assign_weight(self):
+		weighted_percentage=0
+		remain_weight=1
+
+		for score in self.scores:
+			tmp_weight=float(input("Please input weight for "+score+": "))
+			weighted_percentage=weighted_percentage+self.scores[score][0]/self.scores[score][1]*tmp_weight
+			remain_weight=remain_weight-tmp_weight
+			print("assign successful. Remaining weight: "+str(remain_weight))
+		print("the ultimate weighted percentage is: "+str(weighted_percentage))
+		pass
 
 		
 if __name__=="__main__":
@@ -100,3 +114,4 @@ if __name__=="__main__":
 	spider.login()
 	spider.get_course_list()
 	spider.get_grades()
+	spider.assign_weight()
